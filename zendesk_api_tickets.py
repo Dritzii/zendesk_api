@@ -72,7 +72,7 @@ class config():
 
     def test(self):
         try:
-            data = self.session.get(self.url + '/api/v2/satisfaction_ratings.json')
+            data = self.session.get(self.url + '/api/v2/organizations.json')
             if data.status_code in [200,'200']:
                 print("Successful Call")
                 print(data.content)
@@ -82,7 +82,40 @@ class config():
         except Exception as e:
             print(e,sys.stderr)
 
-    
+    def get_orgs(self):
+        try:
+            test = self.session.get(self.url + '/api/v2/organizations.json')
+            if test.status_code in [200,'200']:
+                print("Successful Call")
+                with open('organizations.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= ',')
+                    writer.writerow(['url','id','name','shared_tickets','shared_comments','external_id','created_at',
+                    'updated_at','domain_names','details','notes','group_id','tags',
+                    'organization_fields'])
+                    url = self.url + '/api/v2/organizations.json'
+                    while url:
+                        old_url = self.session.get(url).json()
+                        for each in old_url['organizations']:
+                            writer.writerow([each['url'],
+                                            each['id'],
+                                            each['name'],
+                                            each['shared_tickets'],
+                                            each['shared_comments'],
+                                            each['external_id'],
+                                            each['updated_at'],
+                                            each['domain_names'],
+                                            each['details'],
+                                            each['notes'],
+                                            each['group_id'],
+                                            each['tags'],
+                                            each['organization_fields']])
+                        url = old_url['next_page']
+                        print(url)  
+            else:
+                print("Not Successful",sys.stderr)
+                return False
+        except Exception as e:
+            print(e,sys.stderr)
     def get_users(self):
         try:
             test = self.session.get(self.url + '/api/v2/users.json')
@@ -109,7 +142,6 @@ class config():
                 return False
         except Exception as e:
             print(e,sys.stderr)
-
 
     def get_ticket_metrics(self):
         try:
@@ -156,17 +188,13 @@ class config():
                 return False
         except Exception as e:
             print(e,sys.stderr)
-    def get_satisfactions(self):
-        pass
-
-
 
 
 if __name__ == "__main__":
     #config('','').get_users()
     #config('','').get_ticket_metrics()
     #config('','').get_all_tickets()
-    config('','').test()
+    config('','').get_orgs()
 
 
 
