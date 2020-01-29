@@ -342,8 +342,6 @@ if __name__ == "__main__":
     #config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
     #config('john.pham@olinqua.com','Aqualite12@').get_all_tickets()
     #config('john.pham@olinqua.com','Aqualite12@').get_orgs()
-    #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
-    #config('john.pham@olinqua.com','Aqualite12@').test_post_service()
     config('john.pham@olinqua.com','Aqualite12@').get_groups()
 
 
@@ -352,6 +350,7 @@ if __name__ == "__main__":
 
 
 
-
+    #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
+    #config('john.pham@olinqua.com','Aqualite12@').test_post_service()
 
 
