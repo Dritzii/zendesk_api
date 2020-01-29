@@ -118,7 +118,7 @@ class config():
             print(e,sys.stderr)
     def test_get_service(self):
         try:
-            test = self.session.get(self.url + 'groups.json')
+            test = self.session.get(self.url + 'sessions.json')
             if test.status_code in [200,'200']:
                 print("Successful Call")
                 print(test.content)
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     #config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
     #config('john.pham@olinqua.com','Aqualite12@').get_all_tickets()
     #config('john.pham@olinqua.com','Aqualite12@').get_orgs()
-    config('john.pham@olinqua.com','Aqualite12@').get_groups()
+    #config('john.pham@olinqua.com','Aqualite12@').get_groups()
 
 
 
@@ -352,5 +352,5 @@ if __name__ == "__main__":
 
     #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
     #config('john.pham@olinqua.com','Aqualite12@').test_post_service()
-
+    config('john.pham@olinqua.com','Aqualite12@').test_get_service()
 
