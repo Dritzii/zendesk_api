@@ -21,7 +21,7 @@ class config():
         self.account_key = 'Ve77nc2T1Ieo0xGhzb86OBTPFM8L5KTGZkpQ4PAqdgrEpNx9Ej7VqZEc6Giemsf+hXriYK8xKMSonVP7REJUFQ=='
         self.file_path = "C:/Users/phamm.DRITZII/Documents/GitHub/webscrapping/zendesk_api/"
         self.delimiter = ','
-        self.quote = ''
+        self.quote = '"'
         self.quote_normals = csv.QUOTE_NONNUMERIC
         try:
             self.response = self.session.get(self.url)
@@ -92,14 +92,67 @@ class config():
             print(e,sys.stderr)
     def get_incremental_ticket(self,unix_time):
         try:
-            data = self.session.get(self.url + 'incremental/tickets.json?start_time={}'.format(str(unix_time)))
+            typename = 'incremental_tickets'
+            data = self.session.get(self.url + 'incremental/tickets.json?per_page=1000&start_time={}'.format(str(unix_time)))
             if data.status_code in [200,'200']:
                 print("Successful Call")
-                print(data.content)
+                with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
+                    writer.writerow(['url','id','external_id','via_channel','via_source_from','via_source_to',
+                    'via_source_rel','created_at','updated_at','type','subject','raw_subject','description',
+                    'priority','status','recipient','requester_id','submitter_id','assignee_id',
+                    'organization_id','group_id','collaborator_ids','follower_ids','email_cc_ids','forum_topic_id',
+                    'problem_id','has_incidents','is_public','due_at','tags','custom_fields','satisfaction_rating','sharing_agreement_ids','fields',
+                    'followup_ids','brand_id','allow_channelback','allow_attachments','generated_timestamp'])
+                    end_of_stream = False
+                    while end_of_stream is not True:
+                        old = self.session.get(self.url + 'incremental/tickets.json?per_page=1000&start_time=1332034771').json()
+                        for each in old['tickets']:
+                            writer.writerow([each['url'],
+                                                each['id'],
+                                                each['external_id'],
+                                                each['via']['channel'],
+                                                each['via']['source']['from'],
+                                                each['via']['source']['to'],
+                                                each['via']['source']['rel'],
+                                                each['created_at'],
+                                                each['updated_at'],
+                                                each['type'],
+                                                each['subject'],
+                                                each['raw_subject'],
+                                                each['description'],
+                                                each['priority'],
+                                                each['status'],
+                                                each['recipient'],
+                                                each['requester_id'],
+                                                each['submitter_id'],
+                                                each['assignee_id'],
+                                                each['organization_id'],
+                                                each['group_id'],
+                                                each['collaborator_ids'],
+                                                each['follower_ids'],
+                                                each['email_cc_ids'],
+                                                each['forum_topic_id'],
+                                                each['problem_id'],
+                                                each['has_incidents'],
+                                                each['is_public'],
+                                                each['due_at'],
+                                                each['tags'],
+                                                each['custom_fields'],
+                                                each['satisfaction_rating'],
+                                                each['sharing_agreement_ids'],
+                                                each['fields'],
+                                                each['followup_ids'],
+                                                each['brand_id'],
+                                                each['allow_channelback'],
+                                                each['allow_attachments'],
+                                                each['generated_timestamp']])
+                        print(end_of_stream)                       
+                        end_of_stream = old['end_of_stream']
+                        old = old['next_page']
+                        
             else:
                 print("Not Successful",sys.stderr)
-                print(data.content)
-                return False
         except Exception as e:
             print(e,sys.stderr)
     def test_post_service(self):
@@ -118,10 +171,11 @@ class config():
             print(e,sys.stderr)
     def test_get_service(self):
         try:
-            test = self.session.get(self.url + 'sessions.json')
+            test = self.session.get(self.url + 'ticket_audits.json')
             if test.status_code in [200,'200']:
                 print("Successful Call")
                 print(test.content)
+                
             else:
                 print("not working")
         except Exception as e:
@@ -285,8 +339,9 @@ class config():
                     writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                     writer.writerow(['url','id','ticket_id','created_at','updated_at','group_stations','reopens',
                     'replies','assignee_updated_at','requester_updated_at','status_updated_at','initially_assigned_at',
-                    'assigned_at','solved_at',
-                    'latest_comment_added_at','reply_time_in_minutes','first_resolution_time_in_minutes_calendar','first_resolution_time_in_minutes_business','full_resolution_time_in_minutes_calender',
+                    'assigned_at','solved_at','latest_comment_added_at',
+                    'reply_time_in_minutes','reply_time_in_minutes_business','first_resolution_time_in_minutes_calendar',
+                    'first_resolution_time_in_minutes_business','full_resolution_time_in_minutes_calender',
                     'full_resolution_time_in_minutes_business','agent_wait_time_in_minutes_calender','agent_wait_time_in_minutes_business',
                     'requester_wait_time_in_minutes_calender','requester_wait_time_in_minutes_business','on_hold_time_in_minutes_calendar',
                     'on_hold_time_in_minutes_business','assignee_stations'])
@@ -350,7 +405,7 @@ if __name__ == "__main__":
 
 
 
-    #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
+    config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
     #config('john.pham@olinqua.com','Aqualite12@').test_post_service()
-    config('john.pham@olinqua.com','Aqualite12@').test_get_service()
+    #config('john.pham@olinqua.com','Aqualite12@').test_get_service()
 
