@@ -19,7 +19,10 @@ class config():
         self.url = 'https://olinqua.zendesk.com/api/v2/'
         self.account_name = 'devblobdatazendesk'
         self.account_key = 'Ve77nc2T1Ieo0xGhzb86OBTPFM8L5KTGZkpQ4PAqdgrEpNx9Ej7VqZEc6Giemsf+hXriYK8xKMSonVP7REJUFQ=='
-        
+        self.file_path = "C:/Users/phamm.DRITZII/Documents/GitHub/webscrapping/zendesk_api/"
+        self.delimiter = ','
+        self.quote = ''
+        self.quote_normals = csv.QUOTE_NONNUMERIC
         try:
             self.response = self.session.get(self.url)
             if self.response.status_code != 200:
@@ -30,20 +33,21 @@ class config():
             print(err,sys.stderr)
     def get_all_tickets(self):
         try:
-            test = self.session.get(self.url + 'tickets.json')
+            typename = 'tickets'
+            test = self.session.get(self.url + typename + '.json')
             if test.status_code in [200,'200']:
                 print("Successful Call")
-                with io.open('tickets.csv','w',newline='',encoding='utf-8') as new_file:
-                    writer = csv.writer(new_file, delimiter= '|',quotechar= "`", quoting=csv.QUOTE_NONNUMERIC)
+                with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                     writer.writerow(['status','type','external_id','recipient','requester_id','submitter_id',
                     'assignee_id','organization_id','has_incidents','url','id','created_at','subject',
                     'priority','via_channel','via_source_from','via_source_to','via_source_rel','custom_fields',
                     'raw_subject','description','collaborator_ids','follower_ids','email_cc_ids','forum_topic_id',
                     'problem_id','is_public','due_at','tags'])
-                    url = self.url + 'tickets.json'
+                    url = self.url + typename + '.json'
                     while url:
                         data = self.session.get(url).json()
-                        for each in data['tickets']:
+                        for each in data[typename]:
                             writer.writerow([each['status'],
                                             each['type'],
                                             each['external_id'],
@@ -77,7 +81,7 @@ class config():
                         print(url)
                 print("connecting to blob storage")
                 blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name='tickets.csv',file_path="C:/Users/John Pham/Documents/GitHub/tickets.csv")
+                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
                 generator = blob_service.list_blobs('csv-blob')
                 for blob in generator:
                     print("\t Blob name: " + blob.name)
@@ -112,20 +116,104 @@ class config():
                 return False
         except Exception as e:
             print(e,sys.stderr)
-    def get_orgs(self):
+    def test_get_service(self):
         try:
-            test = self.session.get(self.url + 'organizations.json')
+            test = self.session.get(self.url + 'groups.json')
             if test.status_code in [200,'200']:
                 print("Successful Call")
-                with io.open('organizations.csv','w',newline='',encoding='utf-8') as new_file:
-                    writer = csv.writer(new_file, delimiter= '|',quotechar= "`", quoting=csv.QUOTE_NONNUMERIC)
+                print(test.content)
+            else:
+                print("not working")
+        except Exception as e:
+            print(e,sys.stderr) 
+    def get_groups(self):
+        try:
+            typename = 'groups'
+            test = self.session.get(self.url + typename + '.json')
+            if test.status_code in [200,'200']:
+                print("Successful Call")
+                with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
+                    writer.writerow(['url','id','name','description','default','deleted','created_at',
+                    'updated_at'])
+                    url = self.url + typename + '.json'
+                    while url:
+                        old_url = self.session.get(url).json()
+                        for each in old_url[typename]:
+                            writer.writerow([each['url'],
+                                            each['id'],
+                                            each['name'],
+                                            each['description'],
+                                            each['default'],
+                                            each['deleted'],
+                                            each['created_at'],
+                                            each['updated_at']])
+                        url = old_url['next_page']
+                        print(url)
+                print("connecting to blob storage")
+                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
+                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
+                generator = blob_service.list_blobs('csv-blob')
+                for blob in generator:
+                    print("\t Blob name: " + blob.name)
+            else:
+                print("Not Successful",sys.stderr)
+                return False
+        except Exception as e:
+            print(e,sys.stderr)
+    def get_activities(self): ### todo
+        try:
+            typename = 'activities'
+            test = self.session.get(self.url + typename + '.json')
+            if test.status_code in [200,'200']:
+                print("Successful Call")
+                with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
+                    writer.writerow(['url','id','title','verb','user_id','actor_id','updated_at',
+                    'created_at','object','target','notes','group_id',
+                    'active_support_entitlement','premium_support_customer','support_end_date'])
+                    url = self.url + typename + '.json'
+                    while url:
+                        old_url = self.session.get(url).json()
+                        for each in old_url[typename]:
+                            writer.writerow([each['url'],
+                                            each['id'],
+                                            each['title'],
+                                            each['verb'],
+                                            each['user_id'],
+                                            each['actor_id'],
+                                            each['updated_at'],
+                                            each['created_at'],
+                                            each['object']['comment']['value'],
+                                            each['organization_fields']['support_end_date']])
+                        url = old_url['next_page']
+                        print(url)
+                print("connecting to blob storage")
+                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
+                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
+                generator = blob_service.list_blobs('csv-blob')
+                for blob in generator:
+                    print("\t Blob name: " + blob.name)
+            else:
+                print("Not Successful",sys.stderr)
+                return False
+        except Exception as e:
+            print(e,sys.stderr)    
+    def get_orgs(self):
+        try:
+            typename = 'organizations'
+            test = self.session.get(self.url + typename + '.json')
+            if test.status_code in [200,'200']:
+                print("Successful Call")
+                with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                     writer.writerow(['url','id','name','shared_tickets','shared_comments','external_id','created_at',
                     'updated_at','domain_names','details','notes','group_id',
                     'active_support_entitlement','premium_support_customer','support_end_date'])
-                    url = self.url + 'organizations.json'
+                    url = self.url + typename + '.json'
                     while url:
                         old_url = self.session.get(url).json()
-                        for each in old_url['organizations']:
+                        for each in old_url[typename]:
                             writer.writerow([each['url'],
                                             each['id'],
                                             each['name'],
@@ -145,7 +233,7 @@ class config():
                         print(url)
                 print("connecting to blob storage")
                 blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name='organizations.csv',file_path="C:/Users/John Pham/Documents/GitHub/organizations.csv")
+                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
                 generator = blob_service.list_blobs('csv-blob')
                 for blob in generator:
                     print("\t Blob name: " + blob.name)
@@ -156,17 +244,17 @@ class config():
             print(e,sys.stderr)
     def get_users(self):
         try:
-            test = self.session.get(self.url + 'users.json')
+            typename = 'users'
+            test = self.session.get(self.url + typename + '.json')
             if test.status_code in [200,'200']:
                 print("Successful Call")
-                print(test.content)
-                with io.open('users.csv','w',newline='',encoding='utf-8') as new_file:
-                    writer = csv.writer(new_file, delimiter= '|',quotechar= "`", quoting=csv.QUOTE_NONNUMERIC)
+                with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                     writer.writerow(['id','url','name','email','created_at','updated_at','time_zone'])
-                    url = self.url + 'users.json'
+                    url = self.url + typename + '.json'
                     while url:
                         old_url = self.session.get(url).json()
-                        for each in old_url['users']:
+                        for each in old_url[typename]:
                             writer.writerow([each['id'],
                                             each['url'],
                                             each['name'],
@@ -178,7 +266,7 @@ class config():
                         print(url)
                 print("connecting to blob storage")
                 blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name='users.csv',file_path="C:/Users/John Pham/Documents/GitHub/users.csv")
+                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
                 generator = blob_service.list_blobs('csv-blob')
                 for blob in generator:
                     print("\t Blob name: " + blob.name)
@@ -189,11 +277,12 @@ class config():
             print(e,sys.stderr)
     def get_ticket_metrics(self):
         try:
-            test = self.session.get(self.url + 'ticket_metrics.json')
+            typename = 'ticket_metrics'
+            test = self.session.get(self.url + typename + '.json')
             if test.status_code in [200,'200']:
                 print("Successful Call")
-                with io.open('ticket_metrics.csv','w',newline='',encoding='utf-8') as new_file:
-                    writer = csv.writer(new_file, delimiter= '|',quotechar= "`", quoting=csv.QUOTE_NONNUMERIC)
+                with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
+                    writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                     writer.writerow(['url','id','ticket_id','created_at','updated_at','group_stations','reopens',
                     'replies','assignee_updated_at','requester_updated_at','status_updated_at','initially_assigned_at',
                     'assigned_at','solved_at',
@@ -201,10 +290,10 @@ class config():
                     'full_resolution_time_in_minutes_business','agent_wait_time_in_minutes_calender','agent_wait_time_in_minutes_business',
                     'requester_wait_time_in_minutes_calender','requester_wait_time_in_minutes_business','on_hold_time_in_minutes_calendar',
                     'on_hold_time_in_minutes_business','assignee_stations'])
-                    url = self.url + 'ticket_metrics.json'
+                    url = self.url + typename + '.json'
                     while url:
                         old_url = self.session.get(url).json()
-                        for each in old_url['ticket_metrics']:
+                        for each in old_url[typename]:
                             writer.writerow([each['url'],
                                             each['id'],
                                             each['ticket_id'],
@@ -237,7 +326,7 @@ class config():
                         print(url)
                 print("connecting to blob storage")
                 blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name='ticket_metrics.csv',file_path="C:/Users/John Pham/Documents/GitHub/ticket_metrics.csv")
+                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
                 generator = blob_service.list_blobs('csv-blob')
                 for blob in generator:
                     print("\t Blob name: " + blob.name)
@@ -248,27 +337,14 @@ class config():
             print(e,sys.stderr)
 
 
-
-       
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
-    config('john.pham@olinqua.com','Aqualite12@').get_users()
-    config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
-    config('john.pham@olinqua.com','Aqualite12@').get_all_tickets()
-    config('john.pham@olinqua.com','Aqualite12@').get_orgs()
-    #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1136073600)
+    #config('john.pham@olinqua.com','Aqualite12@').get_users()
+    #config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
+    #config('john.pham@olinqua.com','Aqualite12@').get_all_tickets()
+    #config('john.pham@olinqua.com','Aqualite12@').get_orgs()
+    #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
     #config('john.pham@olinqua.com','Aqualite12@').test_post_service()
+    config('john.pham@olinqua.com','Aqualite12@').get_groups()
 
 
 
