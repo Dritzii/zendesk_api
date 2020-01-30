@@ -20,7 +20,7 @@ class config():
         self.account_name = 'devblobdatazendesk'
         self.account_key = 'Ve77nc2T1Ieo0xGhzb86OBTPFM8L5KTGZkpQ4PAqdgrEpNx9Ej7VqZEc6Giemsf+hXriYK8xKMSonVP7REJUFQ=='
         self.file_path = "C:/Users/phamm.DRITZII/Documents/GitHub/webscrapping/zendesk_api/"
-        self.delimiter = ';'
+        self.delimiter = ','
         self.quote = '`'
         self.quote_normals = csv.QUOTE_NONNUMERIC
         try:
@@ -220,7 +220,6 @@ class config():
             test = self.session.get(self.url + typename + '.json')
             if test.status_code in [200,'200']:
                 print("Successful Call")
-                print(test.content)
                 with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                     writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                     writer.writerow(['name','count'])
@@ -337,15 +336,17 @@ class config():
                     while url:
                         old_url = self.session.get(url,stream=True).json()
                         for each in old_url[typename]:
-                            writer.writerow([
-                                            each['id'],
+                            writer.writerow([each['id'],
                                             each['ticket_id'],
                                             each['metric'],
                                             each['instance_id'],
                                             each['type'],
                                             each['time']])
-                        url = old_url['next_page']
-                        print(url)
+                        if url != old_url['next_page']:
+                            url = old_url['next_page']
+                            print(url)
+                        elif url == old_url['next_page']:
+                            url = False
                 print("connecting to blob storage")
                 blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
                 blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
@@ -452,7 +453,6 @@ class config():
         except Exception as e:
             print(e,sys.stderr)
 
-
 if __name__ == "__main__":
     #config('john.pham@olinqua.com','Aqualite12@').get_users()
     #config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
@@ -461,7 +461,7 @@ if __name__ == "__main__":
     #config('john.pham@olinqua.com','Aqualite12@').get_groups()
     #config('john.pham@olinqua.com','Aqualite12@').get_tags()
     #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
-    #config('john.pham@olinqua.com','Aqualite12@').get_metrics_events()
+    config('john.pham@olinqua.com','Aqualite12@').get_metrics_events()
 
 
 
