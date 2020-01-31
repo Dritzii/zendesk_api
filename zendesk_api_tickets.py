@@ -3,7 +3,7 @@ import sys
 import csv
 import os
 import io
-import time
+
 from azure.storage.blob import BlockBlobService
 from io import BytesIO
 
@@ -23,6 +23,7 @@ class config():
         self.delimiter = ','
         self.quote = '`'
         self.quote_normals = csv.QUOTE_NONNUMERIC
+        self.blob_bool = False
         try:
             self.response = self.session.get(self.url)
             if self.response.status_code != 200:
@@ -31,6 +32,15 @@ class config():
                 print("Login Success",sys.stderr)
         except TimeoutError as err:
             print(err,sys.stderr)
+
+    def blob_upload(self, typename):
+        print("connecting to blob storage")
+        blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
+        blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
+        generator = blob_service.list_blobs('csv-blob')
+        for blob in generator:
+            print("\t Blob name: " + blob.name)
+
     def get_all_tickets(self):
         try:
             typename = 'tickets'
@@ -79,12 +89,10 @@ class config():
                                             each['tags']])
                         url = data['next_page']
                         print(url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -141,15 +149,16 @@ class config():
                                                 each['brand_id'],
                                                 each['allow_channelback'],
                                                 each['allow_attachments'],
-                                                each['generated_timestamp']])                  
-                        old_url = old['next_page']
-                        print(old_url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                                                each['generated_timestamp']])    
+                        if old_url != old['next_page']:
+                            old_url = old['next_page']
+                            print(old_url)
+                        elif old_url == old['next_page']:
+                            old_url = False
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
         except Exception as e:
@@ -174,7 +183,6 @@ class config():
             if test.status_code in [200,'200']:
                 print("Successful Call")
                 print(test.content)
-                
             else:
                 print("not working")
         except Exception as e:
@@ -203,12 +211,10 @@ class config():
                                             each['updated_at']])
                         url = old_url['next_page']
                         print(url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -231,12 +237,10 @@ class config():
                                             each['count']])
                         url = old_url['next_page']
                         print(url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -269,12 +273,10 @@ class config():
                                             each['organization_fields']['support_end_date']])
                         url = old_url['next_page']
                         print(url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -312,12 +314,10 @@ class config():
                                             each['organization_fields']['support_end_date']])
                         url = old_url['next_page']
                         print(url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -347,12 +347,10 @@ class config():
                             print(url)
                         elif url == old_url['next_page']:
                             url = False
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -380,12 +378,10 @@ class config():
                                             each['time_zone']])
                         url = old_url['next_page']
                         print(url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -411,42 +407,41 @@ class config():
                     while url:
                         old_url = self.session.get(url).json()
                         for each in old_url[typename]:
-                            writer.writerow([each['url'],
-                                            each['id'],
-                                            each['ticket_id'],
-                                            each['created_at'],
-                                            each['updated_at'],
-                                            each['group_stations'],
-                                            each['reopens'],
-                                            each['replies'],
-                                            each['assignee_updated_at'],
-                                            each['requester_updated_at'],
-                                            each['status_updated_at'],
-                                            each['initially_assigned_at'],
-                                            each['assigned_at'],
-                                            each['solved_at'],
-                                            each['latest_comment_added_at'],
-                                            each['reply_time_in_minutes']['calendar'],
-                                            each['reply_time_in_minutes']['business'],
-                                            each['first_resolution_time_in_minutes']['calendar'],
-                                            each['first_resolution_time_in_minutes']['business'],
-                                            each['full_resolution_time_in_minutes']['calendar'],
-                                            each['full_resolution_time_in_minutes']['business'],
-                                            each['agent_wait_time_in_minutes']['calendar'],
-                                            each['agent_wait_time_in_minutes']['business'],
-                                            each['requester_wait_time_in_minutes']['calendar'],
-                                            each['requester_wait_time_in_minutes']['business'],
-                                            each['on_hold_time_in_minutes']['calendar'],
-                                            each['on_hold_time_in_minutes']['business'],
-                                            each['assignee_stations']])
+                            if each[1]:
+                                writer.writerow([each['url'],
+                                                each['id'],
+                                                each['ticket_id'],
+                                                each['created_at'],
+                                                each['updated_at'],
+                                                each['group_stations'],
+                                                each['reopens'],
+                                                each['replies'],
+                                                each['assignee_updated_at'],
+                                                each['requester_updated_at'],
+                                                each['status_updated_at'],
+                                                each['initially_assigned_at'],
+                                                each['assigned_at'],
+                                                each['solved_at'],
+                                                each['latest_comment_added_at'],
+                                                each['reply_time_in_minutes']['calendar'],
+                                                each['reply_time_in_minutes']['business'],
+                                                each['first_resolution_time_in_minutes']['calendar'],
+                                                each['first_resolution_time_in_minutes']['business'],
+                                                each['full_resolution_time_in_minutes']['calendar'],
+                                                each['full_resolution_time_in_minutes']['business'],
+                                                each['agent_wait_time_in_minutes']['calendar'],
+                                                each['agent_wait_time_in_minutes']['business'],
+                                                each['requester_wait_time_in_minutes']['calendar'],
+                                                each['requester_wait_time_in_minutes']['business'],
+                                                each['on_hold_time_in_minutes']['calendar'],
+                                                each['on_hold_time_in_minutes']['business'],
+                                                each['assignee_stations']])
                         url = old_url['next_page']
                         print(url)
-                print("connecting to blob storage")
-                blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-                blob_service.create_blob_from_path('csv-blob', blob_name=typename + '.csv',file_path=self.file_path + typename + '.csv')
-                generator = blob_service.list_blobs('csv-blob')
-                for blob in generator:
-                    print("\t Blob name: " + blob.name)
+                if self.blob_bool:
+                    self.blob_upload(typename)
+                else:
+                    print("not uploading")
             else:
                 print("Not Successful",sys.stderr)
                 return False
@@ -460,8 +455,8 @@ if __name__ == "__main__":
     #config('john.pham@olinqua.com','Aqualite12@').get_orgs()
     #config('john.pham@olinqua.com','Aqualite12@').get_groups()
     #config('john.pham@olinqua.com','Aqualite12@').get_tags()
-    #config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
-    config('john.pham@olinqua.com','Aqualite12@').get_metrics_events()
+    config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
+    #config('john.pham@olinqua.com','Aqualite12@').get_metrics_events()
 
 
 
