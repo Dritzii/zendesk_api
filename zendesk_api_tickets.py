@@ -20,7 +20,7 @@ class config():
         self.account_name = 'devblobdatazendesk'
         self.account_key = 'Ve77nc2T1Ieo0xGhzb86OBTPFM8L5KTGZkpQ4PAqdgrEpNx9Ej7VqZEc6Giemsf+hXriYK8xKMSonVP7REJUFQ=='
         self.file_path = "C:/Users/phamm.DRITZII/Documents/GitHub/webscrapping/zendesk_api/"
-        self.delimiter = ','
+        self.delimiter = ';'
         self.quote = '`'
         self.quote_normals = csv.QUOTE_NONNUMERIC
         self.blob_bool = False
@@ -449,16 +449,15 @@ class config():
             print(e,sys.stderr)
 
 if __name__ == "__main__":
-    #config('john.pham@olinqua.com','Aqualite12@').get_users()
-    #config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
-    #config('john.pham@olinqua.com','Aqualite12@').get_all_tickets()
-    #config('john.pham@olinqua.com','Aqualite12@').get_orgs()
-    #config('john.pham@olinqua.com','Aqualite12@').get_groups()
-    #config('john.pham@olinqua.com','Aqualite12@').get_tags()
+    config('john.pham@olinqua.com','Aqualite12@').get_users()
+    config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
+    config('john.pham@olinqua.com','Aqualite12@').get_all_tickets()
+    config('john.pham@olinqua.com','Aqualite12@').get_orgs()
+    config('john.pham@olinqua.com','Aqualite12@').get_groups()
+    config('john.pham@olinqua.com','Aqualite12@').get_tags()
     config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket(1332034771)
-    #config('john.pham@olinqua.com','Aqualite12@').get_metrics_events()
-
-
+    config('john.pham@olinqua.com','Aqualite12@').get_metrics_events()
+    
 
 
 
