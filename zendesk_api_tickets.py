@@ -375,35 +375,34 @@ class config():
                 while url:
                     old_url = self.session.get(url).json()
                     for each in old_url[typename]:
-                        if each[1]:
-                            writer.writerow([each['url'],
-                                            each['id'],
-                                            each['ticket_id'],
-                                            each['created_at'],
-                                            each['updated_at'],
-                                            each['group_stations'],
-                                            each['reopens'],
-                                            each['replies'],
-                                            each['assignee_updated_at'],
-                                            each['requester_updated_at'],
-                                            each['status_updated_at'],
-                                            each['initially_assigned_at'],
-                                            each['assigned_at'],
-                                            each['solved_at'],
-                                            each['latest_comment_added_at'],
-                                            each['reply_time_in_minutes']['calendar'],
-                                            each['reply_time_in_minutes']['business'],
-                                            each['first_resolution_time_in_minutes']['calendar'],
-                                            each['first_resolution_time_in_minutes']['business'],
-                                            each['full_resolution_time_in_minutes']['calendar'],
-                                            each['full_resolution_time_in_minutes']['business'],
-                                            each['agent_wait_time_in_minutes']['calendar'],
-                                            each['agent_wait_time_in_minutes']['business'],
-                                            each['requester_wait_time_in_minutes']['calendar'],
-                                            each['requester_wait_time_in_minutes']['business'],
-                                            each['on_hold_time_in_minutes']['calendar'],
-                                            each['on_hold_time_in_minutes']['business'],
-                                            each['assignee_stations']])
+                        writer.writerow([each['url'],
+                                        each['id'],
+                                        each['ticket_id'],
+                                        each['created_at'],
+                                        each['updated_at'],
+                                        each['group_stations'],
+                                        each['reopens'],
+                                        each['replies'],
+                                        each['assignee_updated_at'],
+                                        each['requester_updated_at'],
+                                        each['status_updated_at'],
+                                        each['initially_assigned_at'],
+                                        each['assigned_at'],
+                                        each['solved_at'],
+                                        each['latest_comment_added_at'],
+                                        each['reply_time_in_minutes']['calendar'],
+                                        each['reply_time_in_minutes']['business'],
+                                        each['first_resolution_time_in_minutes']['calendar'],
+                                        each['first_resolution_time_in_minutes']['business'],
+                                        each['full_resolution_time_in_minutes']['calendar'],
+                                        each['full_resolution_time_in_minutes']['business'],
+                                        each['agent_wait_time_in_minutes']['calendar'],
+                                        each['agent_wait_time_in_minutes']['business'],
+                                        each['requester_wait_time_in_minutes']['calendar'],
+                                        each['requester_wait_time_in_minutes']['business'],
+                                        each['on_hold_time_in_minutes']['calendar'],
+                                        each['on_hold_time_in_minutes']['business'],
+                                        each['assignee_stations']])
                     url = old_url['next_page']
                     print(url)
             if self.blob_bool:
@@ -414,14 +413,14 @@ class config():
             print(e,sys.stderr)
 
 if __name__ == "__main__":
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
-    #config('john.pham@olinqua.com','Aqualite12@',';','`').get_incremental_ticket()
-    #config('john.pham@olinqua.com','Aqualite12@',';','`').get_metrics_events()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
+    config('john.pham@olinqua.com','Aqualite12@',';','`').get_incremental_ticket()
+    config('john.pham@olinqua.com','Aqualite12@',';','`').get_metrics_events()
     
 
 
