@@ -11,7 +11,7 @@ from io import BytesIO
 
 
 class config():
-    def __init__(self, email, password):
+    def __init__(self, email, password, delimiter, quote):
         self.email = email
         self.password = password
         self.session = requests.Session()
@@ -21,8 +21,8 @@ class config():
         self.account_name = 'devblobdatazendesk'
         self.account_key = 'Ve77nc2T1Ieo0xGhzb86OBTPFM8L5KTGZkpQ4PAqdgrEpNx9Ej7VqZEc6Giemsf+hXriYK8xKMSonVP7REJUFQ=='
         self.file_path = "C:/Users/phamm.DRITZII/Documents/GitHub/webscrapping/zendesk_api/"
-        self.delimiter = ';'
-        self.quote = '`'
+        self.delimiter = delimiter
+        self.quote = quote
         self.quote_normals = csv.QUOTE_NONNUMERIC
         self.blob_bool = True
         try:
@@ -362,7 +362,7 @@ class config():
             typename = 'ticket_metrics'
             self.test_api(typename)
             with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
-                writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
+                writer = csv.writer(new_file, delimiter= self.delimiter ,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['url','id','ticket_id','created_at','updated_at','group_stations','reopens',
                 'replies','assignee_updated_at','requester_updated_at','status_updated_at','initially_assigned_at',
                 'assigned_at','solved_at','latest_comment_added_at',
@@ -412,16 +412,16 @@ class config():
                 print("not uploading")
         except Exception as e:
             print(e,sys.stderr)
-            
+
 if __name__ == "__main__":
-    #config('john.pham@olinqua.com','Aqualite12@').get_users()
-    #config('john.pham@olinqua.com','Aqualite12@').get_ticket_metrics()
-    #config('john.pham@olinqua.com','Aqualite12@').get_all_tickets()
-    #config('john.pham@olinqua.com','Aqualite12@').get_orgs()
-    #config('john.pham@olinqua.com','Aqualite12@').get_groups()
-    #config('john.pham@olinqua.com','Aqualite12@').get_tags()
-    config('john.pham@olinqua.com','Aqualite12@').get_incremental_ticket()
-    config('john.pham@olinqua.com','Aqualite12@').get_metrics_events()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
+    #config('john.pham@olinqua.com','Aqualite12@',';','`').get_incremental_ticket()
+    #config('john.pham@olinqua.com','Aqualite12@',';','`').get_metrics_events()
     
 
 
