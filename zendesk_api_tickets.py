@@ -3,6 +3,7 @@ import sys
 import csv
 import os
 import io
+from datetime import date
 
 from azure.storage.blob import BlockBlobService
 from io import BytesIO
@@ -221,13 +222,14 @@ class config():
             self.test_api(typename)
             with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
-                writer.writerow(['name','count'])
+                writer.writerow(['name','count','date'])
                 url = self.url + typename + '.json'
                 while url:
                     old_url = self.session.get(url).json()
                     for each in old_url[typename]:
                         writer.writerow([each['name'],
-                                        each['count']])
+                                        each['count'],
+                                        date.today()])
                     url = old_url['next_page']
                     print(url)
             if self.blob_bool:
