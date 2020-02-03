@@ -435,11 +435,11 @@ class config():
             print(e,sys.stderr)
 
 if __name__ == "__main__":
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
     #config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket()
     #config('john.pham@olinqua.com','Aqualite12@',',','`').get_metrics_events()
