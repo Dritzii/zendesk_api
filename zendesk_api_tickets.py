@@ -67,7 +67,7 @@ class config():
         try:
             typename = 'tickets'
             self.test_api(typename)
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['status','type','external_id','recipient','requester_id','submitter_id',
                 'assignee_id','organization_id','has_incidents','url','id','created_at','subject',
@@ -121,7 +121,7 @@ class config():
         try:
             typename = 'incremental_tickets'
             self.test_incremental_api()
-            with io.open(typename   + '.csv','w',newline='',encoding="utf-8") as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding="utf-8") as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter)
                 writer.writerow(['url','id','external_id','created_at','updated_at','type','subject','raw_subject','description',
                 'priority','status','recipient','requester_id','submitter_id','assignee_id',
@@ -198,7 +198,7 @@ class config():
         try:
             typename = 'groups'
             self.test_api(typename)
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['url','id','name','description','default','deleted','created_at',
                 'updated_at'])
@@ -228,7 +228,7 @@ class config():
         try:
             typename = 'tags'
             self.test_api(typename)
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['name','count','date'])
                 url = self.url + typename + '.json'
@@ -252,7 +252,7 @@ class config():
         try:
             typename = 'activities'
             self.test_api(typename)
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['url','id','title','verb','user_id','actor_id','updated_at',
                 'created_at','object','target','notes','group_id',
@@ -285,7 +285,7 @@ class config():
         try:
             typename = 'organizations'
             self.test_api(typename)
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['url','id','name','shared_tickets','shared_comments','external_id','created_at',
                 'updated_at','domain_names','details','notes','group_id',
@@ -323,7 +323,7 @@ class config():
         try:
             typename = 'ticket_metric_events'
             self.test_incremental_api()
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['id','ticket_id','metric','instance_id','type','time'])
                 url = self.url + 'incremental/ticket_metric_events.json?start_time=1332034771'
@@ -353,7 +353,7 @@ class config():
         try:
             typename = 'users'
             self.test_api(typename)
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['id','url','name','email','created_at','updated_at','time_zone'])
                 url = self.url + typename + '.json'
@@ -381,7 +381,7 @@ class config():
         try:
             typename = 'ticket_metrics'
             self.test_api(typename)
-            with io.open(typename   + '.csv','w',newline='',encoding='utf-8') as new_file:
+            with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter ,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['url','id','ticket_id','created_at','updated_at','group_stations','reopens',
                 'replies','assignee_updated_at','requester_updated_at','status_updated_at','initially_assigned_at',
