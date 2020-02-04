@@ -26,8 +26,8 @@ class config():
         self.delimiter = delimiter
         self.quote = quote
         self.quote_normals = csv.QUOTE_NONNUMERIC
-        self.blob_bool = True
-        self.rmv_file = True
+        self.blob_bool = False
+        self.rmv_file = False
         try:
             self.response = self.session.get(self.url)
             if self.response.status_code != 200:
@@ -55,7 +55,7 @@ class config():
             return False
     
     def test_incremental_api(self):
-        test = self.session.get(self.url_incremental + '/tickets.json?per_page=1000&start_time=1332034771')
+        test = self.session.get(self.url_incremental + '/tickets.json?per_page=1000&start_time=1420070400')
         if test.status_code in [200,'200']:
             print("Successful Call")
         else:
@@ -123,18 +123,19 @@ class config():
             self.test_incremental_api()
             with io.open(typename + '.csv','w',newline='',encoding="utf-8") as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter)
-                writer.writerow(['url','id','external_id','created_at','updated_at','type','subject','raw_subject','description',
+                writer.writerow(['url','id','external_id','via_channel','created_at','updated_at','type','subject','raw_subject','description',
                 'priority','status','recipient','requester_id','submitter_id','assignee_id',
                 'organization_id','group_id','collaborator_ids','follower_ids','email_cc_ids','forum_topic_id',
                 'problem_id','has_incidents','is_public','due_at','tags','custom_fields','satisfaction_rating','sharing_agreement_ids','fields',
                 'followup_ids','brand_id','allow_channelback','allow_attachments','generated_timestamp'])
-                old_url = self.url + 'incremental/tickets.json?&start_time=1332034771'
+                old_url = self.url + 'incremental/tickets.json?&start_time=1420070400'
                 while old_url:
                     old = self.session.get(old_url, stream = True).json()
                     for each in old['tickets']:
                         writer.writerow([each['url'],
                                             each['id'],
                                             each['external_id'],
+                                            each['via']['channel'],
                                             each['created_at'],
                                             each['updated_at'],
                                             each['type'],
@@ -435,13 +436,13 @@ class config():
             print(e,sys.stderr)
 
 if __name__ == "__main__":
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket()
     #config('john.pham@olinqua.com','Aqualite12@',',','`').get_metrics_events()
 
 
