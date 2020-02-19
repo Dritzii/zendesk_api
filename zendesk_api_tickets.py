@@ -3,6 +3,7 @@ import sys
 import csv
 import os
 import io
+import time
 
 
 from datetime import date
@@ -26,8 +27,8 @@ class config():
         self.delimiter = delimiter
         self.quote = quote
         self.quote_normals = csv.QUOTE_NONNUMERIC
-        self.blob_bool = False
-        self.rmv_file = False
+        self.blob_bool = True
+        self.rmv_file = True
         try:
             self.response = self.session.get(self.url)
             if self.response.status_code != 200:
@@ -41,9 +42,7 @@ class config():
         print("connecting to blob storage")
         blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
         blob_service.create_blob_from_path('csv-blob', blob_name= typename + '.csv',file_path=self.file_path + typename + '.csv',timeout=360)
-        generator = blob_service.list_blobs('csv-blob')
-        for blob in generator:
-            print("\t Blob name: " + blob.name)
+        print("blob uploaded")
 
     def test_api(self,typename):
         test = self.session.get(self.url + typename + '.json')
@@ -109,6 +108,41 @@ class config():
                                         each['tags']])
                     url = data['next_page']
                     print(url)
+            if self.blob_bool:
+                self.blob_upload(typename)
+                if self.rmv_file:
+                    os.remove(typename + '.csv')
+            else:
+                print("not uploading")
+        except UnicodeEncodeError as e:
+            print(e,sys.stderr)
+    def get_incremental_ticket_events(self):
+        try:
+            typename = 'incremental_ticket_events'
+            self.test_incremental_api()
+            with io.open(typename + '.csv','w',newline='',encoding="utf-8") as new_file:
+                writer = csv.writer(new_file, delimiter= self.delimiter)
+                writer.writerow(['id','ticket_id','timestamp','created_at','updater_id','via','system_lat',
+                'system_lng','event_type'])
+                old_url = self.url + 'incremental/ticket_events.json?&start_time=1545962247'
+                while old_url:
+                    old = self.session.get(old_url, stream = True).json()
+                    time.sleep(10) ## handle api limits
+                    for each in old['ticket_events']:
+                        writer.writerow([each['id'],
+                                        each['ticket_id'],
+                                        each['timestamp'],
+                                        each['created_at'],
+                                        each['updater_id'],
+                                        each['via'],
+                                        each['system']['latitude'],
+                                        each['system']['longitude'],
+                                        each['event_type']])
+                    if old_url != old['next_page']:
+                        old_url = old['next_page']
+                        print(old_url)
+                    elif old_url == old['next_page']:
+                        old_url = False
             if self.blob_bool:
                 self.blob_upload(typename)
                 if self.rmv_file:
@@ -248,7 +282,7 @@ class config():
             else:
                 print("not uploading")
         except Exception as e:
-            print(e,sys.stderr)            
+            print(e,sys.stderr)
     def get_activities(self):
         try:
             typename = 'activities'
@@ -281,7 +315,7 @@ class config():
             else:
                 print("not uploading")
         except Exception as e:
-            print(e,sys.stderr)    
+            print(e,sys.stderr)
     def get_orgs(self):
         try:
             typename = 'organizations'
@@ -349,7 +383,7 @@ class config():
             else:
                 print("not uploading")
         except Exception as e:
-            print(e,sys.stderr)        
+            print(e,sys.stderr)
     def get_users(self):
         try:
             typename = 'users'
@@ -436,19 +470,13 @@ class config():
             print(e,sys.stderr)
 
 if __name__ == "__main__":
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_users()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_ticket_metrics()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_all_tickets()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_metrics_events()
-
-
-
-
-
-    #config('john.pham@olinqua.com','Aqualite12@').test_post_service()
-    #config('john.pham@olinqua.com','Aqualite12@').test_get_service()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket_events()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_metrics_events()
 
