@@ -4,7 +4,7 @@ import csv
 import os
 import io
 import time
-
+import asyncio
 
 from datetime import date
 from azure.storage.blob import BlockBlobService
@@ -28,7 +28,7 @@ class config():
         self.quote = quote
         self.quote_normals = csv.QUOTE_NONNUMERIC
         self.blob_bool = True
-        self.rmv_file = True
+        self.rmv_file = False
         try:
             self.response = self.session.get(self.url)
             if self.response.status_code != 200:
@@ -41,7 +41,8 @@ class config():
     def blob_upload(self, typename):
         print("connecting to blob storage")
         blob_service = BlockBlobService(account_name = self.account_name,account_key = self.account_key)
-        blob_service.create_blob_from_path('csv-blob', blob_name= typename + '.csv',file_path=self.file_path + typename + '.csv',timeout=360)
+        blob_service.create_blob_from_path('csv-blob', blob_name= typename + '.csv',
+        file_path=self.file_path + typename + '.csv',timeout=360)
         print("blob uploaded")
 
     def test_api(self,typename):
@@ -162,7 +163,7 @@ class config():
                 'organization_id','group_id','collaborator_ids','follower_ids','email_cc_ids','forum_topic_id',
                 'problem_id','has_incidents','is_public','due_at','tags','custom_fields','satisfaction_rating','sharing_agreement_ids','fields',
                 'followup_ids','brand_id','allow_channelback','allow_attachments','generated_timestamp'])
-                old_url = self.url + 'incremental/tickets.json?&start_time=1420070400'
+                old_url = self.url + 'incremental/tickets.json?&start_time=1400070400&updated_at=1310070400'
                 while old_url:
                     old = self.session.get(old_url, stream = True).json()
                     for each in old['tickets']:
@@ -361,7 +362,7 @@ class config():
             with io.open(typename + '.csv','w',newline='',encoding='utf-8') as new_file:
                 writer = csv.writer(new_file, delimiter= self.delimiter,quotechar= self.quote, quoting=self.quote_normals)
                 writer.writerow(['id','ticket_id','metric','instance_id','type','time'])
-                url = self.url + 'incremental/ticket_metric_events.json?start_time=1332034771'
+                url = self.url + 'incremental/ticket_metric_events.json?start_time=1583187726'
                 while url:
                     old_url = self.session.get(url,stream=True).json()
                     for each in old_url[typename]:
@@ -476,7 +477,7 @@ if __name__ == "__main__":
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_orgs()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket()
-    config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket_events()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket()
+    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket_events()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_metrics_events()
 
