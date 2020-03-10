@@ -202,7 +202,7 @@ class config():
                                             each['brand_id'],
                                             each['allow_channelback'],
                                             each['allow_attachments'],
-                                            each['generated_timestamp']])    
+                                            each['generated_timestamp']])
                     if old_url != old['next_page']:
                         old_url = old['next_page']
                         print(old_url)
@@ -478,6 +478,6 @@ if __name__ == "__main__":
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_groups()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_tags()
     #config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket()
-    #config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket_events()
+    config('john.pham@olinqua.com','Aqualite12@',',','`').get_incremental_ticket_events()
     config('john.pham@olinqua.com','Aqualite12@',',','`').get_metrics_events()
 
