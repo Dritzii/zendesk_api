@@ -21,8 +21,8 @@ class config():
         self.session.auth = self.email , self.password
         self.url = 'https://olinqua.zendesk.com/api/v2/'
         self.url_incremental = 'https://olinqua.zendesk.com/api/v2/incremental/'
-        self.account_name = 'devblobdatazendesk'
-        self.account_key = 'Ve77nc2T1Ieo0xGhzb86OBTPFM8L5KTGZkpQ4PAqdgrEpNx9Ej7VqZEc6Giemsf+hXriYK8xKMSonVP7REJUFQ=='
+        self.account_name = ''
+        self.account_key = ''
         self.file_path = os.getcwd() + '/'
         self.delimiter = delimiter
         self.quote = quote
